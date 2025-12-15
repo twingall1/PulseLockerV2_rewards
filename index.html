@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#050815">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>PulseLocker</title>
+
+  <style>
+    /* ===========================
+       THEME VARIABLES
+       =========================== */
+    :root {
+      --bg: #050815;
+      --text: #f3f4f6;
+      --subtext: #9ca3af;
+      --card-bg: #0b1020;
+      --border: #1e2638;
+      --accent: #16a34a;
+      --accent-hover: #1fc556;
+      --input-bg: #020617;
+      --input-border: #4b5563;
+      --status-ok: #4ade80;
+      --status-warn: #facc15;
+      --status-bad: #f87171;
+      --fee: #ef4444;
+      --copy-bg: #1e40af;
+      --copy-bg-hover: #1d4ed8;
+      --min-btn: #facc15;
+      --min-btn-hover: #fbbf24;
+      --vault-container-bg: #1a2540;
+      --info-blue: #60a5fa;
+      --panel-blue: #0b1633;
+    }
+
+    body.light-theme {
+      --bg: #f5f9ff;
+      --text: #1a1a1a;
+      --subtext: #466078;
+      --card-bg: #ffffff;
+      --border: #d0e0f0;
+      --accent: #16a34a;
+      --accent-hover: #0059cc;
+      --input-bg: #ffffff;
+      --input-border: #b2c8dd;
+      --status-ok: #007f3b;
+      --status-warn: #b38600;
+      --status-bad: #c62828;
+      --fee: #c62828;
+      --copy-bg: #1f7aec;
+      --copy-bg-hover: #0059cc;
+      --min-btn: #eab308;
+      --min-btn-hover: #ca8a04;
+      --vault-container-bg: #e3ecff;
+      --info-blue: #1d4ed8;
+      --panel-blue: #eef4ff;
+    }
+
+    /* ===========================
+       GLOBAL ELEMENTS
+       =========================== */
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    h1, h2 {
+      margin-top: 0;
+      margin-bottom: 6px;
+      font-size: 18px;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 6px;
+      border: 1px solid var(--border);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      overflow-x: hidden;
+    }
+
+    #locksContainerCard { background: var(--vault-container-bg); }
+
+    body.light-theme .card { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+
+    input, button, select {
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: var(--accent);
+      color: #ffffff;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+
+    button:hover { background: var(--accent-hover); }
+    button[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+    select { cursor: pointer; }
+
+    .small { font-size: 12px; color: var(--subtext); }
+
+    .mono {
+      font-family: Courier, monospace;
+      font-size: 13px;
+      color: #a5b4fc;
+    }
+
+    .link {
+      color: var(--info-blue);
+      text-decoration: none;
+    }
+    .link:hover { text-decoration: underline; }
+
+    /* ===========================
+       STATUS TAGS
+       =========================== */
+    .tag {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #11182733;
+      border: 1px solid var(--border);
+      margin-right: 6px;
+      margin-top: 4px;
+      display: inline-block;
+    }
+
+    body.light-theme .tag {
+      background: #ffffffcc;
+      border: 1px solid #d0d0d0;
+    }
+
+    .status-bad { color: #c62828 !important; padding: 3px 21px; }
+    .status-ok  { color: #1f7a34 !important; padding: 3px 19px; }
+    .status-warn{ color: #d4a017 !important; padding: 3px 12px; }
+
+    .vault-card .status-bad { border: 2px solid #c62828 !important; background: rgba(198, 40, 40, 0.15); }
+    .vault-card .status-ok  { border: 2px solid #1f7a34 !important; background: rgba(31, 122, 52, 0.15); }
+    .vault-card .status-warn{ border: 2px solid #d4a017 !important; background: rgba(212, 160, 23, 0.15); }
+
+    body.light-theme .vault-card .status-bad { border: 2px solid #c62828 !important; background: #ffffffcc !important; }
+    body.light-theme .vault-card .status-ok  { border: 2px solid #1f7a34 !important; background: #ffffffcc !important; }
+    body.light-theme .vault-card .status-warn{ border: 2px solid #d4a017 !important; background: #ffffffcc !important; }
+
+    /* ===========================
+       HEADER + WALLET BAR
+       =========================== */
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-logo {
+      height: 68px;
+      width: auto;
+    }
+
+    .header-title-block > div:first-child {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .header-title-block .header-subtitle {
+      font-size: 15px;
+      line-height: 1.25;
+      margin-top: 3px;
+      color: var(--subtext);
+    }
+
+    .header-tabs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex: 1;
+      flex-grow: 0 !important;
+      flex-shrink: 0 !important;
+    }
+
+    .header-tab {
+      font-size: 16px;
+      font-weight: 600;
+      color: #9ca3af;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: 0.15s ease;
+      white-space: nowrap;
+      display: inline-flex;
+    }
+
+    .header-tab:hover { color: #60a5fa; }
+
+    .active-header-tab {
+      color: white;
+      background: #1e3a8a;
+      border: 1px solid #3b82f6;
+    }
+
+    .header-telegram {
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+    }
+
+    .header-telegram img {
+      width: 28px;
+      height: 28px;
+      opacity: 0.9;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+    .header-telegram img:hover { opacity: 1; }
+
+    .wallet-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-end;
+    }
+
+    .wallet-top-row {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap: wrap;
+    }
+
+    .theme-toggle {
+      background: #334155;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+    body.light-theme .theme-toggle { background: #e5e7eb; color: #111827; }
+
+    .disconnect-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--copy-bg);
+      border-radius: 6px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      position:relative;
+      transition: background 0.15s;
+    }
+    .disconnect-icon:hover { background: var(--copy-bg-hover); }
+    .disconnect-icon svg { width: 16px; height: 16px; fill: white; }
+
+    .disconnect-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: #000000dd;
+      color: white;
+      padding: 3px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.05s linear;
+    }
+    .disconnect-icon:hover .disconnect-tooltip { opacity: 1; }
+
+    /* ===========================
+       DASHBOARD GRID (DESKTOP)
+       =========================== */
+    .three-col-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 1100px) {
+      .three-col-grid { grid-template-columns: 1fr; }
+    }
+
+    .form-row-h {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .form-row-h label {
+      min-width: 120px;
+      white-space: nowrap;
+    }
+
+    /* New: compact "amount" box to the right of token selector */
+    .form-row-asset-amount {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .form-row-asset-amount .asset-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .form-row-asset-amount .amount-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 220px;
+      justify-content: flex-end;
+    }
+
+    .form-row-asset-amount .amount-wrap input {
+      width: 160px;
+      text-align: right;
+    }
+
+    /* ===========================
+       VAULT CARDS (DESKTOP CORE)
+       =========================== */
+    #locksContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .vault-card { transition: opacity 0.15s ease, transform 0.15s ease; }
+    .vault-card.collapsed .vault-body { display: none; }
+
+    .vault-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      white-space: normal;
+    }
+
+    .vault-body {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 24px;
+      width: 100%;
+    }
+
+    .vault-col-main { display: flex; flex-direction: column; gap: 2px; }
+
+    .vault-col-buttons {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 11px;
+      min-width: 110px;
+    }
+
+    .vault-col-pie {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .price-goal-pie {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1px solid #000;
+      background: #1f2937;
+    }
+
+    .pie-wrapper { position: relative; display: inline-block; }
+
+    .pie-tooltip {
+      position: absolute;
+      background: #000000dd;
+      color: #fff;
+      padding: 3px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -120%);
+      left: 50%;
+      top: 0;
+      opacity: 0;
+      transition: opacity 0.05s linear;
+    }
+
+    .vault-col-time { white-space: nowrap; }
+
+    .time-progress-bar-bg {
+      width: 180px !important;
+      height: 8px;
+      border-radius: 999px;
+      background: #1f2937;
+      overflow: hidden;
+    }
+
+    .time-progress-bar-fill {
+      height: 100%;
+      background: #22c55e;
+      border-radius: 999px;
+      transition: width 0.3s linear;
+    }
+
+    .vault-col-feeds { min-width: 200px; margin-top: 11px; }
+
+    /* Rewards strip (replaces old address strip for VNext) */
+    .rewards-strip {
+      width: 100%;
+      background: var(--panel-blue);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .rewards-strip .reward-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .rewards-strip .reward-title {
+      font-size: 12px;
+      color: var(--subtext);
+    }
+
+    .rewards-strip .reward-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--info-blue);
+      line-height: 1.2;
+    }
+
+    .rewards-strip .reward-footnote {
+      font-size: 11px;
+      color: var(--subtext);
+    }
+
+    .rewards-strip .reward-help {
+      flex: 0 0 auto;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: #1d4ed8;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* Copy / reorder / minmax (kept for layout stability) */
+    .copy-icon-btn {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      background: var(--copy-bg);
+      border-radius: 6px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      margin-left: 6px;
+      transition: background 0.15s;
+    }
+
+    .copy-icon-btn:hover { background: var(--copy-bg-hover); }
+    .copy-icon-btn svg { width: 16px; height: 16px; fill: #fff; }
+
+    .copy-popup {
+      position: absolute;
+      top: -4px;
+      left: 18px;
+      background: #4ade80;
+      color: #000;
+      padding: 2px 6px;
+      font-size: 11px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .reorder-buttons {
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      margin-left:4px;
+    }
+
+    .reorder-up, .reorder-down {
+      width: 14px;
+      height: 14px;
+      background: #3b3f4a;
+      color: #d1d5db;
+      font-size: 10px;
+      border-radius: 3px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s ease;
+    }
+
+    .reorder-up:hover, .reorder-down:hover {
+      background: #4b5563;
+      transform: scale(1.08);
+    }
+
+    .minmax-btn {
+      background: var(--min-btn);
+      color: #111827;
+      font-size: 11px;
+      padding: 3px 6px;
+      border-radius: 6px;
+    }
+    .minmax-btn:hover { background: var(--min-btn-hover); }
+
+    .vault-mobile-row {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .vault-mobile-row .vault-col-pie,
+    .vault-mobile-row .vault-col-time {
+      flex: 1 1 50%;
+      box-sizing: border-box;
+      min-width: 0;
+    }
+
+    /* User guide layout */
+    #view-userguide {
+      max-width: 900px;
+      margin: 0 auto;
+      margin-top: 16px;
+    }
+
+    #view-userguide h1 { font-size: 26px; margin-bottom: 10px; }
+    #view-userguide h2 { margin-top: 24px; color: #93c5fd; font-size: 20px; }
+    #view-userguide a { color: #3b82f6; text-decoration: none; }
+
+    /* Views */
+    #view-dashboard, #view-userguide {
+      width: 100%;
+      display: block;
+    }
+
+    /* Foreign rescue column (kept, but VNext uses universal rescue) */
+    .vault-col-rescue-foreign { display: none; }
+
+    @media (min-width: 700px) {
+      .vault-col-rescue-foreign {
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 11px;
+      }
+      .vault-foreign-rescue-btn {
+        background: #1d4ed8;
+        color: white;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+    }
+
+    /* ===== END PART 1 ===== */
+  </style>
+</head>
+<body>
+
+  <!-- ======================================================
+       HEADER
+       ====================================================== -->
+  <div class="header-row">
+    <div class="header-left">
+      <img src="logo.png" alt="PulseLocker" class="header-logo" />
+      <div class="header-title-block">
+        <div>PulseLocker</div>
+        <div class="header-subtitle">
+          Lock PLS, pDAI or HEX until price or time unlock
+        </div>
+      </div>
+    </div>
+
+    <div class="header-tabs">
+      <a href="#" id="tab-dashboard" class="header-tab active-header-tab">Dashboard</a>
+      <a href="#" id="tab-userguide" class="header-tab">User Guide</a>
+      <div class="header-telegram">
+        <a href="https://t.me/pulselocker" target="_blank" rel="noopener">
+          <img src="telegram.svg" alt="Telegram">
+        </a>
+      </div>
+    </div>
+
+    <div class="wallet-info">
+      <div class="wallet-top-row">
+        <button id="connectBtn">Connect Wallet</button>
+        <button id="themeToggle" class="theme-toggle">🌞 Day</button>
+
+        <div id="disconnectBtn" class="disconnect-icon" style="display:none;">
+          <svg viewBox="0 0 24 24">
+            <path d="M10 17l5-5-5-5v10z"/>
+          </svg>
+          <div class="disconnect-tooltip">Disconnect</div>
+        </div>
+      </div>
+
+      <div id="walletAddress" class="mono"></div>
+      <div id="networkInfo" class="small"></div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       MAIN VIEWS
+       ====================================================== -->
+
+  <!-- ================= DASHBOARD ================= -->
+  <div id="view-dashboard">
+
+    <div class="three-col-grid">
+
+      <!-- ================= LEFT COLUMN ================= -->
+      <div class="col-1">
+
+        <!-- -------- Create Vault -------- -->
+        <div class="card">
+          <h2>Create Vault</h2>
+
+          <form id="createForm">
+
+            <!-- Asset + Amount (bundled deposit) -->
+            <div class="form-row-asset-amount">
+              <div class="asset-wrap">
+                <label for="assetSelect">Asset</label>
+                <select id="assetSelect">
+                  <option value="PLS">PLS</option>
+                  <option value="PDAI">pDAI</option>
+                  <option value="HEX">HEX</option>
+                </select>
+              </div>
+
+              <div class="amount-wrap">
+                <label for="depositAmount">Amount</label>
+                <input
+                  type="number"
+                  id="depositAmount"
+                  placeholder="0.0"
+                  min="0"
+                  step="any"
+                />
+              </div>
+            </div>
+
+            <div class="form-row-h">
+              <label for="targetPrice">Unlock price (USD)</label>
+              <input
+                type="number"
+                id="targetPrice"
+                placeholder="e.g. 0.012"
+                step="any"
+              />
+            </div>
+
+            <div class="form-row-h">
+              <label for="unlockDateTime">Backup time unlock</label>
+              <input type="datetime-local" id="unlockDateTime" />
+            </div>
+
+            <button id="createBtn" type="submit">Create &amp; Lock</button>
+            <div id="createStatus" class="small"></div>
+          </form>
+        </div>
+
+        <!-- -------- Restore Vaults -------- -->
+        <div class="card">
+          <h2>Your Vaults</h2>
+          <button id="restoreVaultsBtn">Load / Restore Vaults</button>
+          <div id="manualAddStatus" class="small"></div>
+        </div>
+
+      </div>
+
+      <!-- ================= CENTER COLUMN ================= -->
+      <div class="col-2">
+
+        <!-- -------- Global Price Feed -------- -->
+        <div class="card">
+          <h2>Global Price Feed</h2>
+          <div id="globalPrice" class="small">
+            Connect wallet to fetch live prices.
+          </div>
+          <div id="globalPriceRaw" class="mono small"></div>
+        </div>
+
+        <!-- -------- About -------- -->
+        <div class="card">
+          <h2>About PulseLocker</h2>
+          <div class="small">
+            PulseLocker lets you lock tokens until a price target is hit or a
+            backup time unlocks the vault. This version uses a single bundled
+            transaction for creation and deposit.
+            <br><br>
+            Rewards are optional, best-effort only, and never block withdrawals.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= RIGHT COLUMN ================= -->
+      <div class="col-3">
+
+        <!-- -------- Manual Add Vault -------- -->
+        <div class="card">
+          <h2>View Vault by Address</h2>
+
+          <div class="form-row-h">
+            <input
+              type="text"
+              id="manualVaultInput"
+              placeholder="0x… vault address"
+              class="mono"
+              style="width:100%;"
+            />
+          </div>
+
+          <button id="addVaultBtn">Add Vault</button>
+          <div id="manualAddStatus" class="small"></div>
+        </div>
+
+        <!-- -------- Rescue Help -------- -->
+        <div class="card">
+          <h2>Rescue</h2>
+          <div class="small">
+            If you accidentally send extra tokens to a vault after creation,
+            they can be rescued after withdrawal. Principal can never be
+            rescued early.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= VAULT LIST ================= -->
+    <div class="card" id="locksContainerCard">
+      <h2>Your Vaults</h2>
+      <div id="locksContainer">
+        Connect wallet to load vaults.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= USER GUIDE ================= -->
+  <div id="view-userguide" style="display:none;">
+
+    <h1>PulseLocker User Guide</h1>
+
+    <h2>Creating a Vault</h2>
+    <p>
+      Vault creation and deposit are now bundled into a single transaction.
+      Choose your asset, enter the amount, set a price target and a backup
+      unlock time, then confirm.
+    </p>
+
+    <h2>Unlock Conditions</h2>
+    <ul>
+      <li>The vault unlocks when the market price meets or exceeds your target.</li>
+      <li>If the price is never reached, the vault unlocks at the backup time.</li>
+    </ul>
+
+    <h2>Rewards</h2>
+    <p>
+      Rewards are optional and best-effort only. They depend on price
+      performance, lock duration, and protocol emission rules.
+    </p>
+    <p>
+      Reward estimates shown in the UI are minimum estimates only and may
+      change. Withdrawals never depend on rewards.
+    </p>
+
+    <h2>Rescue</h2>
+    <p>
+      After a vault has been withdrawn, any accidental extra tokens sent to the
+      vault can be rescued. The original locked amount can never be rescued
+      early.
+    </p>
+
+  </div>
+
+  <!-- ======================================================
+       SCRIPTS
+       ====================================================== -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+  <script src="app.js"></script>
+
+  <!-- ===== END PART 2 ===== -->
+  <style>
+    /* ======================================================
+       MOBILE LAYOUT (<=700px)
+       IMPORTANT: must remain LAST in cascade (fragile)
+       ====================================================== */
+    @media (max-width: 700px) {
+
+      /* Body padding tighter */
+      body {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+      }
+
+      /* Header layout */
+      .header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      .header-left,
+      .header-tabs {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 10px !important;
+        width: auto !important;
+      }
+
+      .header-logo { height: 48px !important; }
+
+      .header-title-block > div:first-child {
+        font-size: 17px !important;
+      }
+
+      .header-subtitle {
+        font-size: 12px !important;
+      }
+
+      .header-tabs {
+        justify-content: flex-start;
+        gap: 10px !important;
+        flex-wrap: nowrap !important;
+      }
+
+      .header-tab {
+        font-size: 14px !important;
+        padding: 3px 8px !important;
+      }
+
+      .wallet-info {
+        width: 100%;
+        align-items: flex-start;
+      }
+
+      .wallet-top-row {
+        gap: 6px;
+        width: 100%;
+      }
+
+      #connectBtn, #themeToggle {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+
+      .disconnect-icon {
+        width: 24px !important;
+        height: 24px !important;
+      }
+
+      /* Dashboard as a simple column on mobile */
+      #view-dashboard {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px;
+      }
+
+      .three-col-grid { display: contents; }
+
+      /* Cards tighter */
+      .three-col-grid .card {
+        padding: 8px 10px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+      }
+
+      .three-col-grid h2 { font-size: 16px !important; }
+      .card h2 { font-size: 15px !important; }
+
+      /* Create form: asset+amount wrap */
+      .form-row-asset-amount {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .form-row-asset-amount .amount-wrap {
+        flex: 1 1 auto;
+        justify-content: flex-start;
+      }
+
+      .form-row-asset-amount .amount-wrap input {
+        width: 100%;
+        text-align: left;
+      }
+
+      .form-row-h {
+        gap: 8px !important;
+        margin-bottom: 10px !important;
+      }
+
+      .form-row-h label {
+        min-width: 90px !important;
+        font-size: 13px !important;
+      }
+
+      .form-row-h input,
+      .form-row-h select {
+        width: 100%;
+        max-width: 100%;
+        font-size: 13px !important;
+        padding: 5px 6px !important;
+      }
+
+      button {
+        font-size: 13px !important;
+        padding: 5px 10px !important;
+      }
+
+      /* Vault card mobile layout */
+      .vault-header {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        row-gap: 4px;
+      }
+
+      .vault-body {
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .vault-col-main {
+        flex: 0 0 100%;
+      }
+
+      /* Left side: pie + time stacked */
+      .vault-mobile-row {
+        order: 2;
+        flex: 0 0 40%;
+        display: flex !important;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .vault-mobile-row .vault-col-pie,
+      .vault-mobile-row .vault-col-time {
+        flex: 1 1 auto;
+      }
+
+      .vault-col-feeds {
+        order: 3;
+        flex: 0 0 58%;
+        min-width: 0;
+        margin-top: 0;
+      }
+
+      .vault-col-buttons {
+        order: 4;
+        flex: 0 0 100%;
+        margin-top: 8px;
+        flex-direction: row;
+        gap: 8px;
+      }
+
+      .vault-col-buttons button {
+        flex: 1 1 50%;
+      }
+
+      .time-progress-bar-bg {
+        width: 160px !important;
+      }
+
+      /* Rewards strip stacks nicely */
+      .rewards-strip {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .rewards-strip .reward-help {
+        width: 100%;
+        text-align: center;
+      }
+
+      /* Foreign rescue column stays hidden unless app.js enables it */
+      .vault-col-rescue-foreign {
+        display: none;
+        order: 5;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .vault-foreign-rescue-btn {
+        flex: 1 1 48%;
+        padding: 5px 8px !important;
+        font-size: 12px !important;
+        background: #1d4ed8;
+        color: white;
+        border-radius: 8px;
+        white-space: nowrap;
+      }
+    }
+  </style>
+
+</body>
+</html>
+
+
