@@ -1,10 +1,9 @@
 console.log("PulseLocker app.js loaded.");
-
 if (!window.ethers) {
-  alert("Ethers failed to load.");
-  throw new Error("Ethers missing");
+  throw new Error("ethers.js not loaded – check index.html script tag");
 }
 const ethersLib = window.ethers;
+
 
 // =======================================================
 // Helpers (FORMAT / SAFE CALL)
@@ -69,11 +68,12 @@ function setCollapsed(addr, v) {
 // Providers (PRIMARY + FALLBACK CLUSTER)
 // =======================================================
 
-const fallbackProvider = new ethersLib.FallbackProvider([
-  new ethersLib.JsonRpcProvider("https://pulsechain.publicnode.com"),
-  new ethersLib.JsonRpcProvider("https://rpc.pulsechain.com"),
-  new ethersLib.JsonRpcProvider("https://rpc.pulsechain.g4mm4.io"),
+const fallbackProvider = new ethersLib.providers.FallbackProvider([
+  new ethersLib.providers.JsonRpcProvider("https://pulsechain.publicnode.com"),
+  new ethersLib.providers.JsonRpcProvider("https://rpc.pulsechain.com"),
+  new ethersLib.providers.JsonRpcProvider("https://rpc.pulsechain.g4mm4.io"),
 ]);
+
 
 function getPrimaryContract(addr, abi) {
   return new ethersLib.Contract(addr, abi, provider || fallbackProvider);
@@ -1337,6 +1337,7 @@ locksContainer.textContent = "Connect wallet to load vaults.";
 // =======================================================
 // ✅ END OF FILE
 // =======================================================
+
 
 
 
