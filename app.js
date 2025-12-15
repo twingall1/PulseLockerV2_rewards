@@ -1,5 +1,3 @@
-
-
 console.log("PulseLocker app.js loaded.");
 
 if (!window.ethers) {
@@ -1339,6 +1337,7 @@ locksContainer.textContent = "Connect wallet to load vaults.";
 // =======================================================
 // ✅ END OF FILE
 // =======================================================
+
 
 
 
