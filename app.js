@@ -77,7 +77,7 @@ const fallbackProvider = new ethersLib.providers.FallbackProvider(
     new ethersLib.providers.JsonRpcProvider("https://rpc.pulsechain.com"),
     new ethersLib.providers.JsonRpcProvider("https://rpc-pulsechain.g4mm4.io")
   ],
-  1
+  
 );
 
 function getPrimaryContract(addr, abi) {
@@ -1342,5 +1342,6 @@ locksContainer.textContent = "Connect wallet to load vaults.";
 // =======================================================
 // ✅ END OF FILE
 // =======================================================
+
 
 
