@@ -93,7 +93,7 @@ function getFallbackContract(addr, abi) {
 // =======================================================
 
 const FACTORY_ADDRESS =
-  "0x0000000000000000000000000000000000000000".toLowerCase(); 
+  "0x3eAB22cb1573965C77176E76f6340e521A99a3CC".toLowerCase(); 
 // <-- FILL AFTER DEPLOY
 
 const ASSETS = {
@@ -1342,4 +1342,5 @@ locksContainer.textContent = "Connect wallet to load vaults.";
 // =======================================================
 // ✅ END OF FILE
 // =======================================================
+
 
