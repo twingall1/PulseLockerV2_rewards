@@ -71,14 +71,11 @@ function setCollapsed(addr, v) {
 // Providers (PRIMARY + FALLBACK CLUSTER)
 // =======================================================
 
-const fallbackProvider = new ethersLib.providers.FallbackProvider(
-  [
-    new ethersLib.providers.JsonRpcProvider("https://pulsechain.publicnode.com"),
-    new ethersLib.providers.JsonRpcProvider("https://rpc.pulsechain.com"),
-    new ethersLib.providers.JsonRpcProvider("https://rpc-pulsechain.g4mm4.io")
-  ],
-  
-);
+const fallbackProvider = new ethersLib.FallbackProvider([
+  new ethersLib.JsonRpcProvider("https://pulsechain.publicnode.com"),
+  new ethersLib.JsonRpcProvider("https://rpc.pulsechain.com"),
+  new ethersLib.JsonRpcProvider("https://rpc.pulsechain.g4mm4.io"),
+]);
 
 function getPrimaryContract(addr, abi) {
   return new ethersLib.Contract(addr, abi, provider || fallbackProvider);
@@ -1342,6 +1339,7 @@ locksContainer.textContent = "Connect wallet to load vaults.";
 // =======================================================
 // ✅ END OF FILE
 // =======================================================
+
 
 
 
